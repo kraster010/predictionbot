@@ -6,7 +6,6 @@ Track Predictions on BitcoinMarkets
 
 ### Prerequisites
 
-Install
 
 ```
 Python 2.x
@@ -19,10 +18,13 @@ pip
 pip install -r requirements.txt
 ```
 
+### Running
+
 inside your project folder:
 
 ```
-http://127.0.0.1:8000/
+python manage.py migrate
+python manage.py runserver
 ```
 
 Open browser and go to:
