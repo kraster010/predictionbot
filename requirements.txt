@@ -1,0 +1,12 @@
+certifi==2018.8.24
+chardet==3.0.4
+Django==1.11.15
+django-money==0.14.3
+idna==2.7
+praw==6.0.0
+prawcore==1.0.0
+py-moneyed==0.7.0
+pytz==2018.5
+requests==2.19.1
+update-checker==0.16
+urllib3==1.23
