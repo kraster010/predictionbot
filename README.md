@@ -1,6 +1,6 @@
 # Prediction Bot
 
-Track Predictions on BitcoinMarkets
+Track Predictions on [BitcoinMarkets](https://www.reddit.com/r/BitcoinMarkets/)
 
 ## Getting Started
 
