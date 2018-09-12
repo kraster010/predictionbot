@@ -1,0 +1,34 @@
+{% extends "base_layout.html" %}
+
+{% block title %}
+    PredictionBot
+{% endblock %}
+
+{% block content %}
+    <table class="table-striped">
+        <tr>
+            <th>START DATE</th>
+            <th>START PRICE</th>
+            <th>TYPE</th>
+            <th>TARGET PRICE</th>
+            <th>TARGET DATE</th>
+        </tr>
+        {% for obj in object_list %}
+            <tr>
+                <td>obj.registered_date</td>
+                <td>obj.registered_price</td>
+                <td>obj.prediction_type</td>
+                <td>obj.target_price</td>
+                <td>obj.target_date</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
