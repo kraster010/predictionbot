@@ -14,5 +14,5 @@ class PredictionView(ListView):
     template_name = "pbot/prediction.html"
 
     def get_context_data(self, **kwargs):
-        context = super(PredictionView,self).get_context_data(**kwargs)
+        context = super(PredictionView, self).get_context_data(**kwargs)
         return context
