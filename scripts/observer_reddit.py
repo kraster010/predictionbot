@@ -1,58 +1,57 @@
-from bot import PredictionParser
+import logging
+from datetime import datetime
 
+import praw
+
+from bot import PredictionParser, CoinMarketCap
+from pbot.models import Prediction
+from coinmarketcap import Market
+
+logger = logging.getLogger('PredictionBot')
+
+
+# registered_date = models.DateField(auto_now=True)
+# registered_price = MoneyField(max_digits=14, decimal_places=2, default_currency='USD')
+# prediction_type = models.CharField(max_length=10, choices=PREDICTION_TYPES, default="at")
+# target_date = models.DateField(auto_now=True)
+# target_price = MoneyField(max_digits=14, decimal_places=2, default_currency='USD')
 
 def run():
-    comment = "!prediction i say bitcoin above 9000 in november 2018"
-    print "Parsing: %s" % comment
-
-    pp = PredictionParser()
-
-    ret = pp.parse_message(comment)
-
-    if not ret:
+    try:
+        reddit = praw.Reddit('bot1')
+        subreddit = reddit.subreddit("BitcoinMarkets")
+    except:
+        print "reddit connection not working"
         return None
 
-    cond, price, date = ret
-    print "condition: %s" % cond
-    print "price: %s" % price
-    print "when: %s" % date
-    #
-    # def process_comment(comment):
-    #     msg = comment.body
-    #     print msg
-    #     print "-------------"
-    #
-    # reddit = praw.Reddit('bot1')
-    # subreddit = reddit.subreddit("BitcoinMarkets")
-    # skip_first = 0
-    # for comment in subreddit.stream.comments():
-    #     if skip_first > 0:
-    #         skip_first = skip_first - 1
-    #         continue
-    #     process_comment(comment)
-    #
-    # #
-    # #
-    # # def latest(subreddit):
-    # #     """return latest discussion thread"""
-    # #     logger.debug("Fetching latest discussion thread")
-    # #     for submission in subreddit.search("Daily Discussion", sort="new"):
-    # #         if "Altcoin" in submission.title:
-    # #             logger.debug("discarding %s", submission.title)
-    # #             continue
-    # #         if submission.author == "AutoModerator":
-    # #             logger.debug("Latest discussion thread returned")
-    # #             return submission
-    # #     logger.warning("Could not find latest discussion thread. Returning None")
-    # #     return None
-    # #
-    # #
-    # # latest_daily_discussion = latest(subreddit=subreddit)
-    # #
-    # # for new_comment in latest_daily_discussion.comments.list():
-    # #     if isinstance(new_comment, MoreComments):
-    # #         continue
-    # #
-    # #     print new_comment.body
+    cmk = CoinMarketCap()
+    pp = PredictionParser()
 
-    pass
+    for comment in subreddit.stream.comments():
+        msg = comment.body
+        msg_permalink = "https://www.reddit.com/" + comment.permalink
+        print msg
+        print msg_permalink
+        print "-" * 50
+        try:
+            ret = pp.parse_message(msg)
+            if not ret:
+                continue
+
+        except Exception:
+            continue
+
+        cond, price, date = ret
+
+        try:
+            pred = Prediction.objects.create(registered_price=cmk.get_price(), prediction_type=cond, target_date=date,
+                                             target_price=price, permalink=msg_permalink)
+
+            print "created prediction with:\n"
+            print "condition: %s" % cond
+            print "price: %s" % price
+            print "when: %s" % date
+            print "btc actual price: %d" % pred.registered_price
+        except:
+            print "exception"
+            pass

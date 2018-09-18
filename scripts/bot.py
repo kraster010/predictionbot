@@ -1,8 +1,8 @@
-import praw
 from parse import *
 import logging
 from datetime import datetime
 from parse import compile
+from coinmarketcap import Market
 
 logger = logging.getLogger('PredictionBot')
 logger.setLevel(logging.DEBUG)
@@ -105,8 +105,27 @@ class PredictionParser:
             datetime_object = datetime.strptime(
                 '{} {} {}'.format('%02d' % date["day"], '%02d' % date["month"], date["year"]), '%d %m %Y')
 
-        if not datetime_object:
-            raise Exception()
-
         return cond, price, datetime_object
 
+
+class CoinMarketCap:
+
+    def __init__(self):
+        self.api = Market()
+        self.last_price_update = None
+        self._cache()
+        if not self.last_price_update:
+            raise Exception("Can't connect to coinmarketcap")
+
+    def _cache(self):
+        usd_btc_price = self.api.ticker(1)
+        try:
+            self.usd_btc_price = int(usd_btc_price["data"]["quotes"]["USD"]["price"])
+            self.last_price_update = datetime.now()
+        except:
+            logger.exception("CoinMarketCap error while caching")
+
+    def get_price(self):
+        if (datetime.now() - self.last_price_update).seconds > 60:
+            self._cache()
+        return self.usd_btc_price

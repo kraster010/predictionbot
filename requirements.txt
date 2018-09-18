@@ -1,3 +1,4 @@
+coinmarketcap
 certifi==2018.8.24
 chardet==3.0.4
 Django==1.11.15
